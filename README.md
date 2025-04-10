@@ -170,3 +170,45 @@ pytest weather_service/tests/
 部署成功后，可以通过以下方式验证:
 - 访问`https://<your-project-name>.vercel.app/health`应返回健康状态
 - 访问`https://<your-project-name>.vercel.app/docs`查看API文档 
+
+### Vercel部署大小限制
+
+由于Vercel对无服务器函数有250MB大小限制，而本项目的完整依赖（特别是数据可视化库）可能超过此限制，我们提供了两种解决方案：
+
+#### 方案一：精简部署（推荐）
+
+1. 使用精简版`requirements.txt`，移除大型依赖：
+   - 移除matplotlib、plotly等数据可视化库
+   - 移除测试相关依赖
+   - 保留核心功能依赖
+
+2. 修改`vercel.json`添加优化配置：
+   ```json
+   {
+     "config": {
+       "maxLambdaSize": "15mb",
+       "excludeFiles": ["weather_service/tests/**", "weather_service/static/images/**"]
+     }
+   }
+   ```
+
+3. 使用API入口的错误处理，确保即使某些依赖缺失，应用仍能提供基本功能。
+
+**注意**：使用此方案部署后，数据可视化功能将不可用，但基础天气查询功能仍然可用。
+
+#### 方案二：拆分服务
+
+对于需要完整功能的生产环境：
+
+1. **API服务**：部署精简版到Vercel，提供基础天气查询功能
+2. **可视化服务**：将数据可视化功能部署到支持大型依赖的平台（如Heroku、Railway等）
+3. **前端整合**：通过前端应用整合两个后端服务
+
+#### 方案三：使用其他部署平台
+
+如果需要保留所有功能且不拆分服务，可以考虑以下平台：
+
+1. **Railway**：支持更大的部署包大小
+2. **Heroku**：提供更灵活的资源配置
+3. **云服务器**：AWS、Azure或阿里云等提供的虚拟机
+4. **Docker部署**：使用容器化部署到支持Docker的平台 
