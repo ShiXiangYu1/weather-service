@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>天气查询服务</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.2em;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        .search-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .search-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .search-form input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .search-form button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .search-form button:hover {
+            background-color: #2980b9;
+        }
+        .api-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .api-item {
+            background-color: #f9f9f9;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .api-item h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        code {
+            background-color: #f1f1f1;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-family: Monaco, Menlo, monospace;
+            font-size: 0.9em;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #777;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>天气查询服务</h1>
+        <p>快速、准确的天气数据查询与可视化</p>
+    </header>
+
+    <div class="search-container">
+        <h2>查询城市天气</h2>
+        <form class="search-form" action="/weather/current" method="get" id="weather-form">
+            <input type="text" name="city" placeholder="输入城市名称（如：北京、上海、南京、广州）" required>
+            <button type="submit">查询天气</button>
+        </form>
+        <div style="margin-top: 15px; font-size: 0.9em; color: #666;">
+            <p>支持中文城市名称查询，例如：北京、上海、广州、深圳、南京、杭州等国内主要城市</p>
+            <p>也支持英文城市名称，例如：London, New York, Tokyo, Paris</p>
+        </div>
+        <script>
+            document.getElementById('weather-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const city = this.elements.city.value.trim();
+                if (city) {
+                    window.location.href = `/weather/current/${city}`;
+                }
+            });
+        </script>
+    </div>
+
+    <div class="api-section">
+        <h2>API 文档</h2>
+        <p>我们提供完整的RESTful API服务，点击 <a href="/docs">这里</a> 查看完整的API文档。</p>
+        
+        <h2>主要接口</h2>
+        
+        <div class="api-item">
+            <h3>获取城市当前天气</h3>
+            <p><code>GET /weather/current/{city}</code></p>
+            <p>示例: <a href="/weather/current/beijing">/weather/current/beijing</a> 或 <a href="/weather/current/北京">/weather/current/北京</a></p>
+        </div>
+        
+        <div class="api-item">
+            <h3>获取城市天气预报</h3>
+            <p><code>GET /weather/forecast/{city}?days={days}</code></p>
+            <p>示例: <a href="/weather/forecast/shanghai?days=3">/weather/forecast/shanghai?days=3</a> 或 <a href="/weather/forecast/上海?days=3">/weather/forecast/上海?days=3</a></p>
+        </div>
+        
+        <div class="api-item">
+            <h3>获取温度趋势图</h3>
+            <p><code>GET /weather/visualization/temperature/{city}?days={days}</code></p>
+            <p>示例: <a href="/weather/visualization/temperature/guangzhou?days=5">/weather/visualization/temperature/guangzhou?days=5</a> 或 <a href="/weather/visualization/temperature/广州?days=5">/weather/visualization/temperature/广州?days=5</a></p>
+        </div>
+        
+        <div class="api-item">
+            <h3>获取天气仪表板</h3>
+            <p><code>GET /weather/visualization/dashboard/{city}?days={days}</code></p>
+            <p>示例: <a href="/weather/visualization/dashboard/shenzhen?days=5">/weather/visualization/dashboard/shenzhen?days=5</a></p>
+        </div>
+        
+        <div class="api-item">
+            <h3>获取查询历史记录</h3>
+            <p><code>GET /weather/history?limit={limit}</code></p>
+            <p>示例: <a href="/weather/history?limit=10">/weather/history?limit=10</a></p>
+        </div>
+    </div>
+
+    <div class="api-section">
+        <h2>技术栈</h2>
+        <ul>
+            <li><strong>FastAPI</strong> - 现代化的高性能Web框架</li>
+            <li><strong>SQLite</strong> - 轻量级数据库</li>
+            <li><strong>OpenWeatherMap API</strong> - 提供天气数据</li>
+            <li><strong>Matplotlib/Plotly</strong> - 数据可视化</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>天气查询服务 &copy; 2025</p>
+    </div>
+</body>
+</html> 
