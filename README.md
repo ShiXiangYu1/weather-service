@@ -126,3 +126,47 @@ pytest weather_service/tests/
 ## 注意事项
 - 使用前需要在.env文件中配置有效的OpenWeatherMap API密钥
 - 首次运行时会自动创建SQLite数据库文件 
+
+## Vercel部署说明
+
+为了部署到Vercel平台，本项目提供了必要的配置文件。
+
+### 部署步骤
+
+1. **准备工作**
+   - 确保项目根目录包含`vercel.json`配置文件
+   - 确保项目根目录包含`requirements.txt`依赖文件
+   - 确保`api/index.py`入口文件存在
+
+2. **部署到Vercel**
+   - 在Vercel网站上导入GitHub仓库
+   - 或使用Vercel CLI进行部署:
+     ```bash
+     npm install -g vercel
+     vercel login
+     vercel
+     ```
+
+3. **环境变量配置**
+   - 在Vercel项目设置中添加环境变量
+   - 必须包含`WEATHER_API_KEY`等关键配置
+   - 可以通过Vercel网站或CLI进行配置:
+     ```bash
+     vercel env add WEATHER_API_KEY
+     ```
+
+4. **部署后的注意事项**
+   - 因为Vercel为无状态服务，数据库部分可能需要修改为使用外部数据库服务
+   - 确保API请求量不超过Vercel免费版的限制
+   - 文件系统操作应谨慎使用，建议使用外部存储服务
+
+### 配置文件说明
+
+- **vercel.json**: 定义了构建配置和路由规则
+- **api/index.py**: Vercel的函数入口点，用于导入FastAPI应用
+
+### 验证部署
+
+部署成功后，可以通过以下方式验证:
+- 访问`https://<your-project-name>.vercel.app/health`应返回健康状态
+- 访问`https://<your-project-name>.vercel.app/docs`查看API文档 
